@@ -54,10 +54,18 @@ class _MyHomePageState extends State<MyHomePage> {
                 onChanged: (value){
                   setState(() {
                     _switchValue = value;
-                     sendMessage('/ledon');
+                    if(_switchValue)
+                    {
+                      sendMessage("onled");
+                    }
+                    else
+                    {
+                      sendMessage("offled");
+                    }
                   });},
                 ),
               ),
+              Icon(_switchValue ? Icons.lightbulb : Icons.light_outlined)
           ]
         ),
       )
@@ -69,17 +77,16 @@ class _MyHomePageState extends State<MyHomePage> {
 Future<void> sendMessage (String msg) async
 {
   final dio = Dio();
-  final url = "//";
-  final _msg = msg;
+  final url = "http://192.168.177.221/$msg";
 
   try
   {
-    Response response = await dio.post(url,data: _msg);
+    Response response = await dio.get(url);
     print("Reponse : ${response.data}");
-    print("Hello esp8266");
+
   }
   catch(e)
   {
-    print("Erreur : $e");
+    print("Erreur de  communication: $e");
   }
 }
