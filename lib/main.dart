@@ -33,6 +33,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool _switchValue = false;
+  int? _responseStatusCode = 404;
 
   @override
   Widget build(BuildContext context) {
@@ -65,28 +66,29 @@ class _MyHomePageState extends State<MyHomePage> {
                   });},
                 ),
               ),
-              Icon(_switchValue ? Icons.lightbulb : Icons.light_outlined)
+              Icon((_responseStatusCode == 200) ? Icons.lightbulb : Icons.light_outlined)
           ]
         ),
       )
     );
   }
-}
 
-//Fonctions d'envoie
-Future<void> sendMessage (String msg) async
-{
-  final dio = Dio();
-  final url = "http://192.168.177.221/$msg";
-
-  try
+  //Fonctions d'envoie
+  Future<void> sendMessage (String msg) async
   {
-    Response response = await dio.get(url);
-    print("Reponse : ${response.data}");
+    final dio = Dio();
+    final url = "http://192.168.177.221/$msg";
 
-  }
-  catch(e)
-  {
-    print("Erreur de  communication: $e");
+    try
+    {
+      Response response = await dio.get(url);
+      print("Reponse : ${response.data}");
+      _responseStatusCode = response.statusCode;
+
+    }
+    catch(e)
+    {
+      print("Erreur de  communication: $e");
+    }
   }
 }
