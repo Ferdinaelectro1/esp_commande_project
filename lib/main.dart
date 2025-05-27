@@ -1,5 +1,7 @@
+import 'package:esp_commande_project/pages/info_page.dart';
+import 'package:esp_commande_project/pages/settings_page.dart';
 import 'package:flutter/material.dart';
-import 'package:dio/dio.dart';
+import 'package:esp_commande_project/pages/home_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,79 +18,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: const MyHomePage(title: 'Home esp8266 commande'),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(title: 'Home esp8266 commande'),
+        '/settings_page' : (context) => const SettingsPage(),
+        '/info_page' : (context) => const InfoPage()
+      },
     );
   }
 }
 
 
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-  final String title;
-
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  bool _switchValue = false;
-  int? _responseStatusCode = 404;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-            children: [
-              Text("Commander la led",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.deepPurpleAccent),),
-              Align(
-              child: Switch(
-                activeColor: Colors.red,
-                inactiveTrackColor: Colors.white,
-                inactiveThumbColor: Colors.black,
-                value: _switchValue, 
-                onChanged: (value){
-                  setState(() {
-                    _switchValue = value;
-                    if(_switchValue)
-                    {
-                      sendMessage("onled");
-                    }
-                    else
-                    {
-                      sendMessage("offled");
-                    }
-                  });},
-                ),
-              ),
-              Icon((_responseStatusCode == 200) ? Icons.lightbulb : Icons.light_outlined)
-          ]
-        ),
-      )
-    );
-  }
-
-  //Fonctions d'envoie
-  Future<void> sendMessage (String msg) async
-  {
-    final dio = Dio();
-    final url = "http://192.168.177.221/$msg";
-
-    try
-    {
-      Response response = await dio.get(url);
-      print("Reponse : ${response.data}");
-      _responseStatusCode = response.statusCode;
-
-    }
-    catch(e)
-    {
-      print("Erreur de  communication: $e");
-    }
-  }
-}
