@@ -14,6 +14,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //int? _responseStatusCode = 404;
   String _response = "";
   String _url = "";
+  bool _await = false;
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +62,9 @@ class _MyHomePageState extends State<MyHomePage> {
                  },
                 ),
               ),
-              Icon((_response == "ON") ? Icons.lightbulb : Icons.light_outlined)
+              Icon((_response == "ON") ? Icons.lightbulb : Icons.light_outlined),
+              SizedBox(height: 30,),
+              _await ? CircularProgressIndicator() : Text("")
           ]
         ),
       ),
@@ -104,6 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
     {
       final url = "$_url/$msg";
       final dio = Dio();
+      setState(() {
+        _await = true;
+      });
       try
       {
         Response response = await dio.get(url);
@@ -124,6 +130,12 @@ class _MyHomePageState extends State<MyHomePage> {
         );
         }
       }
+      finally
+      {
+        setState(() {
+          _await = false;
+        });
+      }
     }
   }
 
@@ -141,4 +153,5 @@ class _MyHomePageState extends State<MyHomePage> {
       });
     }
   }
+
 }

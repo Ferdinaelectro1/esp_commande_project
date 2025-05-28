@@ -49,7 +49,7 @@ class SettingsPageState extends State<SettingsPage>
                   {
                     return "L'url ne peut pas être vide";
                   }
-                  else if(!value.startsWith("http://192.168."))
+                  else if(!value.startsWith("http://192.168."))//vérifie que l'url commmence bien par http://192.168. .
                   {
                     _urlController.text = "http://192.168.";
                     return "L'url doit forcément commencé par : http://192.168.";
@@ -64,7 +64,20 @@ class SettingsPageState extends State<SettingsPage>
                   }
                   else 
                   {
-                    return null;
+                    String Url_end = value.substring(15,value.length);// extrait la chaine qui se trouve après : http://192.168. et la stocke dans Url_end
+                    List<String> parts = Url_end.split('.'); // déparatage la chaine en parties séparé par '.' ex : 343.23 retourne 343 et 23
+                    if(parts.length <= 1)
+                    {
+                      return "Url incorrect. Manque de '.'";
+                    }
+                    else if(!RegExp(r'^[0-9]+$').hasMatch(parts[0]) || !RegExp(r'^[0-9]+$').hasMatch(parts[1])) // verifie si ex : 453.343 , 453 est un nombre et 343 est un nombre.
+                    {
+                      return "Utilisez des nombres uniquement";
+                    }
+                    else
+                    {
+                      return null;
+                    }
                   }
                 },
               ),
