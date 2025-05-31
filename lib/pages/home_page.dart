@@ -10,7 +10,14 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _switchValue = false;
+  final Map<String,dynamic> data = {
+    "ledYellow" : false,
+    "ledGreen": false, 
+    "ledBlue" :false
+  };
+  bool _yellowState = false; 
+  bool _greenState = false; 
+  bool _blueState = false;
   //int? _responseStatusCode = 404;
   String _response = "";
   String _url = "";
@@ -29,42 +36,55 @@ class _MyHomePageState extends State<MyHomePage> {
               Text("Commander la led",style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold,color: Colors.deepPurpleAccent),),
               Align(
               child: Switch(
-                activeColor: Colors.red,
+                activeColor: Colors.yellow,
+                inactiveTrackColor: Colors.white,
+                inactiveThumbColor: Colors.yellow,
+                value: _yellowState, 
+                onChanged: (value){
+                  if(_url.isEmpty == false){
+                  data["ledYellow"] = value ? true : false ;
+                  _yellowState = value;
+                  }
+                  sendCommande(context);
+                 }
+               ),
+              ),
+              SizedBox(height: 30,),
+              Align(
+              child: Switch(
+                activeColor: Colors.green,
                 inactiveTrackColor: Colors.white,
                 inactiveThumbColor: Colors.green,
-                value: _switchValue, 
+                value: _greenState, 
                 onChanged: (value){
-                  
-                    if(_url.isEmpty == false)
-                    {
-                      setState(() {
-                        _switchValue = value;
-                        if(_switchValue)
-                        {
-                          sendMessage(context,"onled");
-                        }
-                        else
-                        {
-                          sendMessage(context,"offled");
-                        }
-                      });
-                    }
-                    else
-                    {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text("Vous devez renseigner l'url du serveur d'abord !"),
-                          behavior: SnackBarBehavior.floating,
-                          backgroundColor: Colors.red,
-                        )
-                      );
-                    }
-                 },
-                ),
+                  if(_url.isEmpty == false){
+                  data["ledGreen"] = value ? true : false;
+                  _greenState = value;
+                  }
+                  sendCommande(context);
+                 }
+               ),
               ),
+              SizedBox(height: 30,),
+              Align(
+              child: Switch(
+                activeColor: Colors.blue,
+                inactiveTrackColor: Colors.white,
+                inactiveThumbColor: Colors.blue,
+                value: _blueState, 
+                onChanged: (value){
+                  if(_url.isEmpty == false){
+                  data["ledBlue"] = value ? true : false;
+                  _blueState = value;
+                  }
+                  sendCommande(context);
+                 }
+               ),
+              ),
+              SizedBox(height: 30,),
               Icon((_response == "ON") ? Icons.lightbulb : Icons.light_outlined),
               SizedBox(height: 30,),
-              _await ? CircularProgressIndicator() : Text("")
+              _await ? CircularProgressIndicator() : Text(""),
           ]
         ),
       ),
@@ -100,19 +120,41 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  //Fonctions d'envoie d'une commande
+  void sendCommande(BuildContext context)
+  { 
+    if(_url.isEmpty == false)
+    {
+      setState(() {
+        sendMessage(context);
+      });
+    }
+    else
+    {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Vous devez renseigner l'url du serveur d'abord !"),
+          behavior: SnackBarBehavior.floating,
+          backgroundColor: Colors.red,
+        )
+      );
+    }
+  }
+
   //Fonctions d'envoie
-  Future<void> sendMessage (BuildContext context, String msg) async
+  Future<void> sendMessage (BuildContext context) async
   {
     if(_url.isEmpty == false)
     {
-      final url = "$_url/$msg";
+      final url = "$_url/data";
       final dio = Dio();
       setState(() {
         _await = true;
       });
       try
       {
-        Response response = await dio.get(url);
+        //Response response = await dio.get(url);
+        Response response = await dio.post(url,data: data);
         _response = response.toString();
        // _responseStatusCode = response.statusCode;
 
