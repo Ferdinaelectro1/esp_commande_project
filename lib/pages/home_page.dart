@@ -13,11 +13,13 @@ class _MyHomePageState extends State<MyHomePage> {
   final Map<String,dynamic> data = {
     "ledYellow" : false,
     "ledGreen": false, 
-    "ledBlue" :false
+    "ledBlue" :false,
+    "ledRed" :false
   };
   bool _yellowState = false; 
   bool _greenState = false; 
   bool _blueState = false;
+  bool _redState = false;
   //int? _responseStatusCode = 404;
   String _response = "";
   String _url = "";
@@ -60,6 +62,22 @@ class _MyHomePageState extends State<MyHomePage> {
                   if(_url.isEmpty == false){
                   data["ledGreen"] = value ? true : false;
                   _greenState = value;
+                  }
+                  sendCommande(context);
+                 }
+               ),
+              ),
+              SizedBox(height: 30,),
+              Align(
+              child: Switch(
+                activeColor: Colors.red,
+                inactiveTrackColor: Colors.white,
+                inactiveThumbColor: Colors.red,
+                value: _redState, 
+                onChanged: (value){
+                  if(_url.isEmpty == false){
+                  data["ledRed"] = value ? true : false;
+                  _redState = value;
                   }
                   sendCommande(context);
                  }
